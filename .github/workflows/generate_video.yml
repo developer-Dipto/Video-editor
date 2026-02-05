@@ -1,4 +1,4 @@
-name: Generate Small Quote Video
+name: Final Video Editor
 
 on:
   workflow_dispatch:
@@ -6,35 +6,32 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Set up Python
-      uses: actions/setup-python@v5
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
       with:
         python-version: '3.9'
 
-    - name: Install Dependencies
+    - name: Install System Tools
       run: |
         sudo apt-get update
-        sudo apt-get install -y ffmpeg
+        sudo apt-get install -y ffmpeg fonts-dejavu
         pip install requests
 
-    - name: Run Generator
+    - name: Run Python Editor
       env:
         PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
       run: python main.py
 
-    - name: Generate Online View Link
+    - name: Get Video Link
       run: |
-        echo "--- Your Video Link Below ---"
-        curl -F "file=@output.mp4" https://file.io
-        echo -e "\n--- Copy the 'link' from above and open in browser ---"
+        echo "------------------------------------------------"
+        echo "CLICK THE LINK BELOW TO VIEW VIDEO:"
+        curl https://bashupload.com/output.mp4 --data-binary @output.mp4
+        echo -e "\n------------------------------------------------"
 
-    - name: Upload Artifact
+    - name: Save Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: small-video
+        name: my-video
         path: output.mp4
