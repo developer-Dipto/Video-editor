@@ -1,4 +1,4 @@
-name: Generate Quote Video with Audio
+name: Generate Small Quote Video
 
 on:
   workflow_dispatch:
@@ -9,29 +9,32 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4 # v3 থেকে v4 করা হয়েছে
+      uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v5 # v4 থেকে v5 করা হয়েছে
+      uses: actions/setup-python@v5
       with:
         python-version: '3.9'
 
-    - name: Install System Dependencies
+    - name: Install Dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y ffmpeg
-
-    - name: Install Python Libraries
-      run: pip install requests
+        pip install requests
 
     - name: Run Generator
       env:
         PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
-        PIXABAY_API_KEY: ${{ secrets.PIXABAY_API_KEY }}
       run: python main.py
 
-    - name: Upload Video
-      uses: actions/upload-artifact@v4 # v3 থেকে v4 করা হয়েছে (এটাই মেইন সমাধান)
+    - name: Generate Online View Link
+      run: |
+        echo "--- Your Video Link Below ---"
+        curl -F "file=@output.mp4" https://file.io
+        echo -e "\n--- Copy the 'link' from above and open in browser ---"
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
       with:
-        name: final-video
+        name: small-video
         path: output.mp4
